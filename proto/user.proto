@@ -3,7 +3,7 @@ package cloudbees;
 option go_package="./proto;cloudbeespb";
 
 message User {
-  int32 email = 1;
+  string email = 1;
   string firstName = 2;
   string lastName = 3;
 }

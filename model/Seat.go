@@ -1,7 +1,7 @@
 package model
 
 type Seat struct {
-	SeatNumber int
+	SeatNumber int32
 	Section    string
-	TicketID   int
+	TicketID   int32
 }

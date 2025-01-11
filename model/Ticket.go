@@ -1,9 +1,10 @@
 package model
 
 type Ticket struct {
-	TicketID
-	From
-	To
-	Price
-	UserEmail
+	TicketID   int32
+	From       string
+	To         string
+	Price      float32
+	UserEmail  string
+	SeatNumber int32
 }

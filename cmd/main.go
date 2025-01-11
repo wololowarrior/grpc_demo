@@ -9,6 +9,7 @@ import (
 	cloudbeespb "cloudbees/proto"
 	"cloudbees/service"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 )
 
 func main() {
@@ -20,11 +21,15 @@ func main() {
 	ticketDatastore := inmem.NewTickets()
 	seatDataStore := inmem.NewSeat()
 	userDatastore := inmem.NewUserStore()
-	ticketService := service.NewTicketService(ticketDatastore)
-	seatService := service.NewSeatService(seatDataStore)
+	ticketService := service.NewTicketService(ticketDatastore, userDatastore, seatDataStore)
+	seatService := service.NewSeatService(seatDataStore, ticketDatastore, userDatastore)
 	userService := service.NewUserService(userDatastore)
 	cloudbeespb.RegisterTicketingServer(server, ticketService)
 	cloudbeespb.RegisterSeatingServer(server, seatService)
 	cloudbeespb.RegisterUserServiceServer(server, userService)
-	server.Serve(lis)
+	reflection.Register(server)
+	err = server.Serve(lis)
+	if err != nil {
+		return
+	}
 }

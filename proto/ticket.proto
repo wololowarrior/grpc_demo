@@ -11,6 +11,7 @@ message TicketDetails {
   string source = 2;
   string destination = 3;
   float price = 4;
+  int32 seat_number = 5;
 }
 
 message TicketRequest {
@@ -20,10 +21,16 @@ message TicketRequest {
 
 message TicketResponse {
   TicketDetails ticket = 1;
-  AllocatedSeat seat = 2;
+  Seat seat = 2;
+  User user = 3;
+}
+
+message Receipt {
+  TicketDetails ticket = 1;
+  User user = 3;
 }
 
 service Ticketing {
   rpc Purchase(TicketRequest) returns (TicketResponse){}
-  rpc GetReceipt(User) returns (TicketResponse){}
+  rpc GetReceipt(User) returns (Receipt){}
 }

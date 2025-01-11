@@ -4,15 +4,9 @@ option go_package="./proto;cloudbeespb";
 
 import "user.proto";
 
-enum Section {
-  SECTION_A = 0;
-  SECTION_B = 1;
-
-}
-
 message Seat {
   int32 seat_no = 1;
-  Section section = 2;
+  string section = 2;
 }
 
 message AllocatedSeat {
@@ -21,7 +15,7 @@ message AllocatedSeat {
 }
 
 message ListSeatsRequest {
-  Section section = 1;
+  string section = 1;
 }
 
 message ListSeatsResponse {
@@ -29,11 +23,17 @@ message ListSeatsResponse {
 }
 
 message ModifySeatRequest {
-  User user = 1;
-  Seat new_seat = 2;
+  int32 ticket_id = 1;
+  optional string section = 3;
+}
+
+message AllocationRequest {
+  int32 ticket_id = 1;
+  optional string section = 2;
 }
 
 service Seating {
   rpc List(ListSeatsRequest) returns (ListSeatsResponse){}
   rpc Modify(ModifySeatRequest) returns (AllocatedSeat){}
+  rpc Allocate(AllocationRequest) returns(AllocatedSeat){}
 }

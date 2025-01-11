@@ -1,6 +1,11 @@
 package service
 
-import "cloudbees/dao"
+import (
+	context "context"
+
+	"cloudbees/dao"
+	cloudbeespb "cloudbees/proto"
+)
 
 type UserService struct {
 	store dao.UserStore
