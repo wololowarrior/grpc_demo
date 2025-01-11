@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package cloudbees;
+option go_package="./proto;cloudbeespb";
+
+import "user.proto";
+import "seat.proto";
+
+message TicketDetails {
+  optional int32 id=1;
+  string source = 2;
+  string destination = 3;
+  float price = 4;
+}
+
+message TicketRequest {
+  TicketDetails ticket=1;
+  User user=2;
+}
+
+message TicketResponse {
+  TicketDetails ticket = 1;
+  AllocatedSeat seat = 2;
+}
+
+service Ticketing {
+  rpc Purchase(TicketRequest) returns (TicketResponse){}
+  rpc GetReceipt(User) returns (TicketResponse){}
+}

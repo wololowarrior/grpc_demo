@@ -1,0 +1,39 @@
+syntax = "proto3";
+package cloudbees;
+option go_package="./proto;cloudbeespb";
+
+import "user.proto";
+
+enum Section {
+  SECTION_A = 0;
+  SECTION_B = 1;
+
+}
+
+message Seat {
+  int32 seat_no = 1;
+  Section section = 2;
+}
+
+message AllocatedSeat {
+  Seat seat = 1;
+  User user = 2;
+}
+
+message ListSeatsRequest {
+  Section section = 1;
+}
+
+message ListSeatsResponse {
+  repeated AllocatedSeat allocated_seat = 1;
+}
+
+message ModifySeatRequest {
+  User user = 1;
+  Seat new_seat = 2;
+}
+
+service Seating {
+  rpc List(ListSeatsRequest) returns (ListSeatsResponse){}
+  rpc Modify(ModifySeatRequest) returns (AllocatedSeat){}
+}

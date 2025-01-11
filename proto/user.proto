@@ -1,0 +1,13 @@
+syntax = "proto3";
+package cloudbees;
+option go_package="./proto;cloudbeespb";
+
+message User {
+  int32 email = 1;
+  string firstName = 2;
+  string lastName = 3;
+}
+
+service UserService {
+  rpc DeleteUser(User) returns (User){}
+}
