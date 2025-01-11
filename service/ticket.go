@@ -40,21 +40,12 @@ func (t *TicketService) Purchase(ctx context.Context, request *cloudbeespb.Ticke
 		status.New(codes.Internal, "Some error occurred")
 		return nil, err
 	}
-	// assign seat
-	//seat, err := t.seatDataStore.Allocate(ticket.TicketID)
-	//if err != nil {
-	//	return nil, err
-	//}
-	// return ticket
+
 	ticketDetails.Id = &ticket.TicketID
-	//seatDetails := &cloudbeespb.Seat{
-	//	Section: seat.Section,
-	//	SeatNo:  seat.SeatNumber,
-	//}
+
 	resp := &cloudbeespb.TicketResponse{
 		Ticket: ticketDetails,
-		//Seat:   seatDetails,
-		User: request.GetUser(),
+		User:   request.GetUser(),
 	}
 	return resp, nil
 }
