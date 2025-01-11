@@ -23,7 +23,7 @@ func main() {
 	userDatastore := inmem.NewUserStore()
 	ticketService := service.NewTicketService(ticketDatastore, userDatastore, seatDataStore)
 	seatService := service.NewSeatService(seatDataStore, ticketDatastore, userDatastore)
-	userService := service.NewUserService(userDatastore)
+	userService := service.NewUserService(userDatastore, ticketDatastore, seatDataStore)
 	cloudbeespb.RegisterTicketingServer(server, ticketService)
 	cloudbeespb.RegisterSeatingServer(server, seatService)
 	cloudbeespb.RegisterUserServiceServer(server, userService)

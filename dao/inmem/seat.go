@@ -52,7 +52,10 @@ func (s *SeatStore) Modify(old *model.Seat, newSection string) (*model.Seat, err
 		return nil, err
 	}
 	// remove new seat
-	s.Delete(old.TicketID, old.Section)
+	err = s.Delete(old.TicketID, old.Section)
+	if err != nil {
+		return nil, err
+	}
 	return newSeat, nil
 }
 
@@ -60,9 +63,10 @@ func (s *SeatStore) Delete(ticketID int32, section string) error {
 	for _, seat := range s.Seating {
 		if seat.TicketID == ticketID && seat.Section == section {
 			seat.TicketID = -1
+			return nil
 		}
 	}
-	return nil
+	return errors.New("seat not found")
 }
 
 func (s *SeatStore) Get(ticketID int32) (*model.Seat, error) {

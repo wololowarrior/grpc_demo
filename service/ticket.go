@@ -17,7 +17,6 @@ type TicketService struct {
 }
 
 func (t *TicketService) Purchase(ctx context.Context, request *cloudbeespb.TicketRequest) (*cloudbeespb.TicketResponse, error) {
-	// get/create user
 	user := model.User{Email: request.GetUser().Email,
 		FirstName: request.GetUser().FirstName,
 		LastName:  request.GetUser().LastName,
@@ -60,7 +59,7 @@ func (t *TicketService) Purchase(ctx context.Context, request *cloudbeespb.Ticke
 	return resp, nil
 }
 
-func (t *TicketService) GetReceipt(ctx context.Context, user *cloudbeespb.User) (*cloudbeespb.Receipt, error) {
+func (t *TicketService) GetReceipt(ctx context.Context, user *cloudbeespb.User) (*cloudbeespb.TicketResponse, error) {
 	user1, err := t.userDataStore.GetUserByEmail(user.Email)
 	if err != nil {
 		if err.Error() == "user not found" {
@@ -75,8 +74,14 @@ func (t *TicketService) GetReceipt(ctx context.Context, user *cloudbeespb.User) 
 			status.New(codes.NotFound, "Ticket not found")
 		}
 	}
-	//seat, err := t.seatDataStore.Get(ticket.TicketID)
-
+	seat, err := t.seatDataStore.Get(ticket.TicketID)
+	var seatDetails *cloudbeespb.Seat
+	if err == nil {
+		seatDetails = &cloudbeespb.Seat{
+			Section: seat.Section,
+			SeatNo:  seat.SeatNumber,
+		}
+	}
 	ticketDetails := &cloudbeespb.TicketDetails{
 		Id:          &ticket.TicketID,
 		Source:      ticket.To,
@@ -84,9 +89,10 @@ func (t *TicketService) GetReceipt(ctx context.Context, user *cloudbeespb.User) 
 		Price:       ticket.Price,
 	}
 
-	resp := &cloudbeespb.Receipt{
+	resp := &cloudbeespb.TicketResponse{
 		Ticket: ticketDetails,
 		User:   &cloudbeespb.User{Email: user1.Email, FirstName: user1.FirstName, LastName: user1.LastName},
+		Seat:   seatDetails,
 	}
 	return resp, nil
 }

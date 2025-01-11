@@ -7,4 +7,5 @@ type SeatStore interface {
 	List(section string) ([]*model.Seat, error)
 	Modify(*model.Seat, string) (*model.Seat, error)
 	Get(id int32) (*model.Seat, error)
+	Delete(ticketID int32, section string) error
 }

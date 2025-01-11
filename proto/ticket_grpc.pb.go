@@ -28,7 +28,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type TicketingClient interface {
 	Purchase(ctx context.Context, in *TicketRequest, opts ...grpc.CallOption) (*TicketResponse, error)
-	GetReceipt(ctx context.Context, in *User, opts ...grpc.CallOption) (*Receipt, error)
+	GetReceipt(ctx context.Context, in *User, opts ...grpc.CallOption) (*TicketResponse, error)
 }
 
 type ticketingClient struct {
@@ -48,8 +48,8 @@ func (c *ticketingClient) Purchase(ctx context.Context, in *TicketRequest, opts 
 	return out, nil
 }
 
-func (c *ticketingClient) GetReceipt(ctx context.Context, in *User, opts ...grpc.CallOption) (*Receipt, error) {
-	out := new(Receipt)
+func (c *ticketingClient) GetReceipt(ctx context.Context, in *User, opts ...grpc.CallOption) (*TicketResponse, error) {
+	out := new(TicketResponse)
 	err := c.cc.Invoke(ctx, Ticketing_GetReceipt_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -62,7 +62,7 @@ func (c *ticketingClient) GetReceipt(ctx context.Context, in *User, opts ...grpc
 // for forward compatibility
 type TicketingServer interface {
 	Purchase(context.Context, *TicketRequest) (*TicketResponse, error)
-	GetReceipt(context.Context, *User) (*Receipt, error)
+	GetReceipt(context.Context, *User) (*TicketResponse, error)
 }
 
 // UnimplementedTicketingServer should be embedded to have forward compatible implementations.
@@ -72,7 +72,7 @@ type UnimplementedTicketingServer struct {
 func (UnimplementedTicketingServer) Purchase(context.Context, *TicketRequest) (*TicketResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Purchase not implemented")
 }
-func (UnimplementedTicketingServer) GetReceipt(context.Context, *User) (*Receipt, error) {
+func (UnimplementedTicketingServer) GetReceipt(context.Context, *User) (*TicketResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetReceipt not implemented")
 }
 

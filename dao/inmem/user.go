@@ -18,9 +18,12 @@ func (u *UserStore) CreateUser(user *model.User) error {
 	return nil
 }
 
-func (u *UserStore) DeleteUser(user *model.User) error {
-	//TODO implement me
-	panic("implement me")
+func (u *UserStore) DeleteUser(email string) error {
+	if _, ok := u.Store[email]; !ok {
+		return errors.New("not found")
+	}
+	delete(u.Store, email)
+	return nil
 }
 
 func (u *UserStore) GetUserByEmail(email string) (*model.User, error) {

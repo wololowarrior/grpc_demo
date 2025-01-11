@@ -7,4 +7,5 @@ type TicketStore interface {
 	GetTicket(id int32) (*model.Ticket, error)
 	GetTicketByUserEmail(email string) (*model.Ticket, error)
 	UpdateTicket(id, seatNumber int32) (*model.Ticket, error)
+	DeleteTicket(id int32) error
 }
