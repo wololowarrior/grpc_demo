@@ -16,7 +16,7 @@ const (
 
 func main() {
 	// Set up a connection to the server.
-	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
+	conn, err := grpc.NewClient(address, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
 	}
@@ -70,7 +70,9 @@ func main() {
 	log.Printf("New seat: %s", r3)
 
 	r4, err := ticketingClient.GetReceipt(ctx,
-		&cloudbeespb.User{Email: "abc"})
+		&cloudbeespb.GetReceiptRequest{
+			TicketId: r.GetTicket().GetId(),
+		})
 
 	if err != nil {
 		log.Fatalf("could not get receipt: %v", err)

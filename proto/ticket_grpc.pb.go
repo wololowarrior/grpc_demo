@@ -28,7 +28,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type TicketingClient interface {
 	Purchase(ctx context.Context, in *TicketRequest, opts ...grpc.CallOption) (*TicketResponse, error)
-	GetReceipt(ctx context.Context, in *User, opts ...grpc.CallOption) (*TicketResponse, error)
+	GetReceipt(ctx context.Context, in *GetReceiptRequest, opts ...grpc.CallOption) (*TicketResponse, error)
 }
 
 type ticketingClient struct {
@@ -48,7 +48,7 @@ func (c *ticketingClient) Purchase(ctx context.Context, in *TicketRequest, opts 
 	return out, nil
 }
 
-func (c *ticketingClient) GetReceipt(ctx context.Context, in *User, opts ...grpc.CallOption) (*TicketResponse, error) {
+func (c *ticketingClient) GetReceipt(ctx context.Context, in *GetReceiptRequest, opts ...grpc.CallOption) (*TicketResponse, error) {
 	out := new(TicketResponse)
 	err := c.cc.Invoke(ctx, Ticketing_GetReceipt_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -62,7 +62,7 @@ func (c *ticketingClient) GetReceipt(ctx context.Context, in *User, opts ...grpc
 // for forward compatibility
 type TicketingServer interface {
 	Purchase(context.Context, *TicketRequest) (*TicketResponse, error)
-	GetReceipt(context.Context, *User) (*TicketResponse, error)
+	GetReceipt(context.Context, *GetReceiptRequest) (*TicketResponse, error)
 }
 
 // UnimplementedTicketingServer should be embedded to have forward compatible implementations.
@@ -72,7 +72,7 @@ type UnimplementedTicketingServer struct {
 func (UnimplementedTicketingServer) Purchase(context.Context, *TicketRequest) (*TicketResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Purchase not implemented")
 }
-func (UnimplementedTicketingServer) GetReceipt(context.Context, *User) (*TicketResponse, error) {
+func (UnimplementedTicketingServer) GetReceipt(context.Context, *GetReceiptRequest) (*TicketResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetReceipt not implemented")
 }
 
@@ -106,7 +106,7 @@ func _Ticketing_Purchase_Handler(srv interface{}, ctx context.Context, dec func(
 }
 
 func _Ticketing_GetReceipt_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(User)
+	in := new(GetReceiptRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -118,7 +118,7 @@ func _Ticketing_GetReceipt_Handler(srv interface{}, ctx context.Context, dec fun
 		FullMethod: Ticketing_GetReceipt_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TicketingServer).GetReceipt(ctx, req.(*User))
+		return srv.(TicketingServer).GetReceipt(ctx, req.(*GetReceiptRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

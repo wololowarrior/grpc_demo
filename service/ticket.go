@@ -50,20 +50,20 @@ func (t *TicketService) Purchase(ctx context.Context, request *cloudbeespb.Ticke
 	return resp, nil
 }
 
-func (t *TicketService) GetReceipt(ctx context.Context, user *cloudbeespb.User) (*cloudbeespb.TicketResponse, error) {
-	user1, err := t.userDataStore.GetUserByEmail(user.Email)
+func (t *TicketService) GetReceipt(ctx context.Context, request *cloudbeespb.GetReceiptRequest) (*cloudbeespb.TicketResponse, error) {
+	ticket, err := t.datastore.GetTicket(request.GetTicketId())
+	if err != nil {
+		if err.Error() == "not found" {
+			return nil, status.Error(codes.NotFound, "Ticket not found")
+		}
+	}
+
+	user1, err := t.userDataStore.GetUserByEmail(ticket.UserEmail)
 	if err != nil {
 		if err.Error() == "user not found" {
 			status.New(codes.NotFound, "User not found")
 		}
 		return nil, err
-	}
-
-	ticket, err := t.datastore.GetTicketByUserEmail(user.Email)
-	if err != nil {
-		if err.Error() == "ticket not found" {
-			status.New(codes.NotFound, "Ticket not found")
-		}
 	}
 	seat, err := t.seatDataStore.Get(ticket.TicketID)
 	var seatDetails *cloudbeespb.Seat
