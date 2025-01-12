@@ -18,6 +18,7 @@ func main() {
 		log.Fatalf("failed to listen: %v", err)
 	}
 	server := grpc.NewServer()
+	log.Println("Init datastores..")
 	ticketDatastore := inmem.NewTickets()
 	seatDataStore := inmem.NewSeat()
 	userDatastore := inmem.NewUserStore()
@@ -30,6 +31,7 @@ func main() {
 	cloudbeespb.RegisterSeatingServer(server, seatService)
 	cloudbeespb.RegisterUserServiceServer(server, userService)
 	reflection.Register(server)
+	log.Println("starting server... listening on", fmt.Sprintf("localhost:%d", 8080))
 	err = server.Serve(lis)
 	if err != nil {
 		return

@@ -23,11 +23,9 @@ func (t *TicketService) Purchase(ctx context.Context, request *cloudbeespb.Ticke
 	}
 	err := t.userDataStore.CreateUser(&user)
 	if err != nil {
-		status.New(codes.Internal, "Some error occurred")
-		return nil, err
+		return nil, status.Error(codes.Internal, "Some error occurred")
 	}
-	// check seat availability
-	// book ticket
+
 	ticketDetails := request.GetTicket()
 	ticket := model.Ticket{
 		From:      ticketDetails.GetSource(),
@@ -37,8 +35,7 @@ func (t *TicketService) Purchase(ctx context.Context, request *cloudbeespb.Ticke
 	}
 	err = t.datastore.CreateTicket(&ticket)
 	if err != nil {
-		status.New(codes.Internal, "Some error occurred")
-		return nil, err
+		return nil, status.Error(codes.Internal, "Some error occurred")
 	}
 
 	ticketDetails.Id = &ticket.TicketID
@@ -61,7 +58,7 @@ func (t *TicketService) GetReceipt(ctx context.Context, request *cloudbeespb.Get
 	user1, err := t.userDataStore.GetUserByEmail(ticket.UserEmail)
 	if err != nil {
 		if err.Error() == "user not found" {
-			status.New(codes.NotFound, "User not found")
+			return nil, status.Error(codes.NotFound, "User not found")
 		}
 		return nil, err
 	}

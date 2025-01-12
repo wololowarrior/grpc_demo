@@ -2,14 +2,12 @@ package inmem
 
 import (
 	"errors"
-	"sync"
 
 	"cloudbees/model"
 )
 
 type SeatStore struct {
 	Seating []*model.Seat
-	lock    sync.Mutex
 }
 
 func (s *SeatStore) Allocate(ticketID int32, section string) (*model.Seat, error) {
@@ -29,7 +27,7 @@ func (s *SeatStore) Allocate(ticketID int32, section string) (*model.Seat, error
 		}
 	}
 
-	return nil, errors.New("seat not found")
+	return nil, errors.New("all booked")
 }
 
 func (s *SeatStore) List(section string) ([]*model.Seat, error) {
@@ -70,29 +68,27 @@ func (s *SeatStore) Delete(ticketID int32, section string) error {
 }
 
 func (s *SeatStore) Get(ticketID int32) (*model.Seat, error) {
-	s.lock.Lock()
-	defer s.lock.Unlock()
 	for _, seat := range s.Seating {
 		if seat.TicketID == ticketID {
 			return seat, nil
 		}
 	}
 
-	return nil, errors.New("seat not found")
+	return nil, errors.New("not found")
 }
 
 func NewSeat() *SeatStore {
 	var seatStore = SeatStore{
 		Seating: make([]*model.Seat, 0),
 	}
-	for i := 1; i <= 50; i++ {
+	for i := 1; i <= 5; i++ {
 		seatStore.Seating = append(seatStore.Seating, &model.Seat{
 			SeatNumber: int32(i),
 			Section:    "A",
 			TicketID:   -1,
 		})
 	}
-	for i := 1; i <= 50; i++ {
+	for i := 1; i <= 5; i++ {
 		seatStore.Seating = append(seatStore.Seating, &model.Seat{
 			SeatNumber: int32(i),
 			Section:    "B",

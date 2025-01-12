@@ -23,6 +23,7 @@ func main() {
 	defer conn.Close()
 	ticketingClient := cloudbeespb.NewTicketingClient(conn)
 	seatingC := cloudbeespb.NewSeatingClient(conn)
+	userC := cloudbeespb.NewUserServiceClient(conn)
 	// Contact the server and print out its response.
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
@@ -84,4 +85,11 @@ func main() {
 		log.Fatalf("could not get ticket: %v", err)
 	}
 	log.Printf("List of seats: %s", r2)
+	r5, err := userC.DeleteUser(ctx, &cloudbeespb.User{
+		Email: "abc",
+	})
+	if err != nil {
+		log.Fatalf("could not get ticket: %v", err)
+	}
+	log.Printf("User deleted: %s", r5)
 }

@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"log"
 
 	"cloudbees/dao"
 	cloudbeespb "cloudbees/proto"
@@ -27,6 +28,7 @@ func (s *SeatService) List(ctx context.Context, request *cloudbeespb.ListSeatsRe
 	for _, seat := range seats {
 		ticket, err := s.ticketDataStore.GetTicket(seat.TicketID)
 		if err != nil {
+			log.Println("Failed to get tickets for seat", seat.TicketID)
 			continue
 		}
 		user, err := s.userDataStore.GetUserByEmail(ticket.UserEmail)
@@ -54,10 +56,25 @@ func (s *SeatService) Modify(ctx context.Context, request *cloudbeespb.ModifySea
 		}
 	}
 	oldSeat, err := s.datastore.Get(ticket.TicketID)
+	if err != nil {
+		if err.Error() == "not found" {
+			return nil, status.Error(codes.NotFound, "Ticket not found")
+		}
+	}
 	newSeat, err := s.datastore.Modify(oldSeat, request.GetSection())
 	if err != nil {
-		return nil, err
+		if err.Error() == "all booked" {
+			return nil, status.Error(codes.ResourceExhausted, "Fully allocated")
+		}
 	}
+
+	_, err = s.ticketDataStore.UpdateTicket(ticket.TicketID, newSeat.SeatNumber)
+	if err != nil {
+		if err.Error() == "not found" {
+			return nil, status.Error(codes.NotFound, "Ticket not found")
+		}
+	}
+
 	allocatedSeat := &cloudbeespb.AllocatedSeat{
 		Seat: &cloudbeespb.Seat{
 			SeatNo:  newSeat.SeatNumber,
@@ -79,6 +96,9 @@ func (s *SeatService) Allocate(ctx context.Context, request *cloudbeespb.Allocat
 	}
 	seat, err := s.datastore.Allocate(request.GetTicketId(), request.GetSection())
 	if err != nil {
+		if err.Error() == "all booked" {
+			return nil, status.Error(codes.ResourceExhausted, "Fully allocated")
+		}
 		return nil, err
 	}
 
