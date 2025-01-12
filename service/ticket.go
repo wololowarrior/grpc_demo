@@ -17,6 +17,11 @@ type TicketService struct {
 }
 
 func (t *TicketService) Purchase(ctx context.Context, request *cloudbeespb.TicketRequest) (*cloudbeespb.TicketResponse, error) {
+	if request.GetUser().Email == "" ||
+		request.GetUser().FirstName == "" ||
+		request.GetUser().LastName == "" {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
 	user := model.User{Email: request.GetUser().Email,
 		FirstName: request.GetUser().FirstName,
 		LastName:  request.GetUser().LastName,
