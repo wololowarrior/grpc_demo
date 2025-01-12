@@ -1,6 +1,15 @@
 ## Summary
 
 This project demonstrates a rudimentary ticket booking backend build on GRPc.
+The train is split into two section with configurable seating. Number of seats can be changed from the code.
+
+## How to build
+
+To build client and server use
+```shell
+ go build -o bin/grpc_client client/purchase_ticket.go && 
+ go build -o bin/grpc_server cmd/main.go 
+```
 
 ## How to run
 Built binaries for grpc server and a sample client are kept in the `bin/` folder.
